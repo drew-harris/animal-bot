@@ -3,6 +3,7 @@ import { createCommand } from "../command/createCommand";
 import { respond } from "../ai";
 import { db } from "../db";
 import { sites } from "../db/schema";
+import { slugify } from "../utils/slugify";
 
 export const generateCommand = createCommand(
   {
@@ -21,10 +22,7 @@ export const generateCommand = createCommand(
   },
   async (inter) => {
     const { name, idea } = inter.input;
-    const slug = name
-      .toLowerCase()
-      .replace(/[^a-z0-9]+/g, "-")
-      .replace(/^-+|-+$/g, "");
+    const slug = slugify(name);
 
     await inter.reply(`Generating website "${name}" based on your idea...`);
 
