@@ -52,8 +52,14 @@ export const generateCommand = createCommand(
         throw new Error("Failed to extract HTML or JavaScript content");
       }
 
-      const html = htmlMatch[1];
+      let html = htmlMatch[1];
       const js = jsMatch[1];
+
+      // Update script src to point to the correct URL
+      html = html.replace(
+        /<script\s+src=["'](?:[^"']+)?["']/g,
+        `<script src="/${slug}/script.js"`
+      );
 
       // Basic HTML validation
       if (!html.includes("<html") || !html.includes("</html>")) {
