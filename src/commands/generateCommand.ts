@@ -4,6 +4,7 @@ import { respond } from "../ai";
 import { db } from "../db";
 import { sites } from "../db/schema";
 import { slugify } from "../utils/slugify";
+import { mkdir, write } from "bun";
 
 export const generateCommand = createCommand(
   {
@@ -27,18 +28,24 @@ export const generateCommand = createCommand(
     await inter.reply(`Generating website "${name}" based on your idea...`);
 
     try {
-      const response = await respond(
+      const html = await respond(
         `Generate an HTML website with the following idea: ${idea}`,
       );
+      
+      // Create directory and save file
+      const sitePath = `${process.env.SITES_PATH}/${slug}`;
+      await mkdir(sitePath, { recursive: true });
+      await write(`${sitePath}/index.html`, html);
+
       // Save to database
       await db.insert(sites).values({
         name,
         slug,
-        folder: slug, // We'll use this path later for file storage
+        folder: slug,
       });
 
       await inter.editReply(
-        `Generated website for "${name}" (${slug}):\n${response}`,
+        `Generated website for "${name}"!\nView it at: ${process.env.SITE_URL}/${slug}`,
       );
     } catch (error) {
       if (error instanceof Error) {
