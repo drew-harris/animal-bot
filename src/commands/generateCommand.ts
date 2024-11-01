@@ -20,13 +20,23 @@ export const generateCommand = createCommand(
   async (inter) => {
     const { name, idea } = inter.input;
     await inter.reply(`Generating website "${name}" based on your idea...`);
-    
+
     try {
-      const response = await respond(`Generate an HTML website with the following idea: ${idea}`);
+      const response = await respond(
+        `Generate an HTML website with the following idea: ${idea}`,
+      );
       // TODO: Save HTML to file and return URL once file handling is implemented
       await inter.editReply(`Generated website for "${name}":\n${response}`);
     } catch (error) {
-      await inter.editReply(`Failed to generate website: ${error.message}`);
+      if (error instanceof Error) {
+        console.error(error);
+        await inter.editReply(
+          `Failed to generate website for "${name}": ${error.message}`,
+        );
+        return;
+      } else {
+        await inter.editReply(`Failed to generate website`);
+      }
     }
   },
 );
