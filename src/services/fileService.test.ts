@@ -7,6 +7,7 @@ import { join } from "node:path";
 describe("fileService", () => {
   const testSlug = "test-site";
   const testHtml = "<html>test</html>";
+  const testJs = "console.log('test');";
 
   afterEach(async () => {
     // Clean up test files after each test
@@ -16,20 +17,25 @@ describe("fileService", () => {
     }
   });
 
-  it("should create directory and save file", async () => {
+  it("should create directory and save both HTML and JS files", async () => {
     await saveSite({
       slug: testSlug,
       html: testHtml,
+      js: testJs,
     });
 
     const sitePath = join(process.env.SITES_PATH!, testSlug);
-    const filePath = join(sitePath, "index.html");
+    const htmlPath = join(sitePath, "index.html");
+    const jsPath = join(sitePath, "script.js");
     
-    // Check if file exists
-    expect(existsSync(filePath)).toBe(true);
+    // Check if files exist
+    expect(existsSync(htmlPath)).toBe(true);
+    expect(existsSync(jsPath)).toBe(true);
     
     // Check file contents
-    const content = await readFile(filePath, 'utf-8');
-    expect(content).toBe(testHtml);
+    const htmlContent = await readFile(htmlPath, 'utf-8');
+    const jsContent = await readFile(jsPath, 'utf-8');
+    expect(htmlContent).toBe(testHtml);
+    expect(jsContent).toBe(testJs);
   });
 });

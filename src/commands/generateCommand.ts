@@ -41,18 +41,26 @@ export const generateCommand = createCommand(
 
     try {
       const response = await respond(
-        `Generate an HTML website with the following idea: ${idea}`,
+        `Generate a website with the following idea: ${idea}`,
       );
 
-      // Extract HTML content between backticks if present
-      const html = response.replace(/^```html\n?|\n?```$/g, "");
+      // Extract HTML and JS content between backticks
+      const htmlMatch = response.match(/```html\n([\s\S]*?)\n```/);
+      const jsMatch = response.match(/```javascript\n([\s\S]*?)\n```/);
+
+      if (!htmlMatch || !jsMatch) {
+        throw new Error("Failed to extract HTML or JavaScript content");
+      }
+
+      const html = htmlMatch[1];
+      const js = jsMatch[1];
 
       // Basic HTML validation
       if (!html.includes("<html") || !html.includes("</html>")) {
         throw new Error("Invalid HTML generated");
       }
 
-      await saveSite({ slug, html });
+      await saveSite({ slug, html, js });
 
       // Save to database
       await db.insert(sites).values({
