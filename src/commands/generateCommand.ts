@@ -4,7 +4,7 @@ import { respond } from "../ai";
 import { db } from "../db";
 import { sites } from "../db/schema";
 import { slugify } from "../utils/slugify";
-import { mkdir, write } from "node:fs/promises";
+import { saveSite } from "../services/fileService";
 
 export const generateCommand = createCommand(
   {
@@ -32,10 +32,7 @@ export const generateCommand = createCommand(
         `Generate an HTML website with the following idea: ${idea}`,
       );
       
-      // Create directory and save file
-      const sitePath = `${process.env.SITES_PATH}/${slug}`;
-      await mkdir(sitePath, { recursive: true });
-      await write(`${sitePath}/index.html`, html);
+      await saveSite({ slug, html });
 
       // Save to database
       await db.insert(sites).values({
