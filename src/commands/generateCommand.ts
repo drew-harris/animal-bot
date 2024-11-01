@@ -48,18 +48,20 @@ export const generateCommand = createCommand(
       const htmlMatch = response.match(/```html\n([\s\S]*?)\n```/);
       const jsMatch = response.match(/```javascript\n([\s\S]*?)\n```/);
 
-      if (!htmlMatch || !jsMatch) {
-        throw new Error("Failed to extract HTML or JavaScript content");
+      if (!htmlMatch) {
+        throw new Error("Failed to extract HTML content");
       }
 
       let html = htmlMatch[1];
-      const js = jsMatch[1];
+      const js = jsMatch ? jsMatch[1] : undefined;
 
-      // Update script src to point to the correct URL
-      html = html.replace(
-        /<script\s+src=["'](?:[^"']+)?["']/g,
-        `<script src="/${slug}/script.js"`
-      );
+      // Only update script src if we have JavaScript
+      if (js) {
+        html = html.replace(
+          /<script\s+src=["'](?:[^"']+)?["']/g,
+          `<script src="/${slug}/script.js"`
+        );
+      }
 
       // Basic HTML validation
       if (!html.includes("<html") || !html.includes("</html>")) {
