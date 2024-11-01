@@ -4,7 +4,7 @@ import { respond } from "../ai";
 import { db } from "../db";
 import { sites } from "../db/schema";
 import { slugify } from "../utils/slugify";
-import { mkdir, write } from "bun";
+import { mkdir, write } from "node:fs/promises";
 
 export const generateCommand = createCommand(
   {
