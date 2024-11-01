@@ -1,4 +1,6 @@
-exports.default = {
+require('dotenv').config();
+
+module.exports = {
   schema: "./src/db/schema.ts",
   driver: "mysql2",
   dbCredentials: {
