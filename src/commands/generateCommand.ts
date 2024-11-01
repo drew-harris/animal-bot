@@ -28,9 +28,17 @@ export const generateCommand = createCommand(
     await inter.reply(`Generating website "${name}" based on your idea...`);
 
     try {
-      const html = await respond(
+      const response = await respond(
         `Generate an HTML website with the following idea: ${idea}`,
       );
+      
+      // Extract HTML content between backticks if present
+      const html = response.replace(/^```html\n?|\n?```$/g, '');
+      
+      // Basic HTML validation
+      if (!html.includes('<html') || !html.includes('</html>')) {
+        throw new Error('Invalid HTML generated');
+      }
       
       await saveSite({ slug, html });
 
