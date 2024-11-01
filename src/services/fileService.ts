@@ -1,4 +1,4 @@
-import { mkdir, write } from "node:fs/promises";
+import { mkdir, writeFile } from "node:fs/promises";
 
 export interface SaveSiteOptions {
   slug: string;
@@ -8,5 +8,5 @@ export interface SaveSiteOptions {
 export async function saveSite({ slug, html }: SaveSiteOptions) {
   const sitePath = `${process.env.SITES_PATH}/${slug}`;
   await mkdir(sitePath, { recursive: true });
-  await write(`${sitePath}/index.html`, html);
+  await writeFile(`${sitePath}/index.html`, html);
 }
