@@ -1,22 +1,35 @@
-import { describe, expect, it, mock } from "bun:test";
+import { describe, expect, it, afterEach } from "bun:test";
 import { saveSite } from "./fileService";
-import { mkdir, writeFile } from "node:fs/promises";
-
-mock.module("node:fs/promises", () => ({
-  mkdir: mock(() => Promise.resolve()),
-  writeFile: mock(() => Promise.resolve()),
-}));
+import { readFile, rm } from "node:fs/promises";
+import { existsSync } from "node:fs";
+import { join } from "node:path";
 
 describe("fileService", () => {
+  const testSlug = "test-site";
+  const testHtml = "<html>test</html>";
+
+  afterEach(async () => {
+    // Clean up test files after each test
+    const sitePath = join(process.env.SITES_PATH!, testSlug);
+    if (existsSync(sitePath)) {
+      await rm(sitePath, { recursive: true });
+    }
+  });
+
   it("should create directory and save file", async () => {
-    process.env.SITES_PATH = "/test/path";
-    
     await saveSite({
-      slug: "test-site",
-      html: "<html>test</html>",
+      slug: testSlug,
+      html: testHtml,
     });
 
-    expect(mkdir).toHaveBeenCalledWith("/test/path/test-site", { recursive: true });
-    expect(writeFile).toHaveBeenCalledWith("/test/path/test-site/index.html", "<html>test</html>");
+    const sitePath = join(process.env.SITES_PATH!, testSlug);
+    const filePath = join(sitePath, "index.html");
+    
+    // Check if file exists
+    expect(existsSync(filePath)).toBe(true);
+    
+    // Check file contents
+    const content = await readFile(filePath, 'utf-8');
+    expect(content).toBe(testHtml);
   });
 });
