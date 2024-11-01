@@ -1,4 +1,6 @@
 import Fastify from "fastify";
+import { readFile } from "fs/promises";
+import { join } from "path";
 
 const fastify = Fastify({
   logger: true,
@@ -6,6 +8,17 @@ const fastify = Fastify({
 
 fastify.get("/", function (request, reply) {
   reply.send({ hello: "world" });
+});
+
+fastify.get("/:slug", async function (request, reply) {
+  const { slug } = request.params as { slug: string };
+  
+  try {
+    const html = await readFile(join(process.cwd(), "sites", slug, "index.html"), "utf-8");
+    reply.type("text/html").send(html);
+  } catch (error) {
+    reply.code(404).send({ error: "Website not found" });
+  }
 });
 
 const startServer = () => {
