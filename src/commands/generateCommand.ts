@@ -32,7 +32,7 @@ export const generateCommand = createCommand(
 
     if (existing) {
       await inter.reply(
-        `A website with the name "${name}" already exists. Please choose a different name.`
+        `A website with the name "${name}" already exists. Please choose a different name.`,
       );
       return;
     }
@@ -43,15 +43,15 @@ export const generateCommand = createCommand(
       const response = await respond(
         `Generate an HTML website with the following idea: ${idea}`,
       );
-      
+
       // Extract HTML content between backticks if present
-      const html = response.replace(/^```html\n?|\n?```$/g, '');
-      
+      const html = response.replace(/^```html\n?|\n?```$/g, "");
+
       // Basic HTML validation
-      if (!html.includes('<html') || !html.includes('</html>')) {
-        throw new Error('Invalid HTML generated');
+      if (!html.includes("<html") || !html.includes("</html>")) {
+        throw new Error("Invalid HTML generated");
       }
-      
+
       await saveSite({ slug, html });
 
       // Save to database
