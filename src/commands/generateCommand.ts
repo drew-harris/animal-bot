@@ -1,6 +1,8 @@
 import z from "zod";
 import { createCommand } from "../command/createCommand";
 import { respond } from "../ai";
+import { db } from "../db";
+import { sites } from "../db/schema";
 
 export const generateCommand = createCommand(
   {
@@ -19,14 +21,24 @@ export const generateCommand = createCommand(
   },
   async (inter) => {
     const { name, idea } = inter.input;
+    const slug = name.toLowerCase()
+      .replace(/[^a-z0-9]+/g, '-')
+      .replace(/^-+|-+$/g, '');
+      
     await inter.reply(`Generating website "${name}" based on your idea...`);
 
     try {
       const response = await respond(
         `Generate an HTML website with the following idea: ${idea}`,
       );
-      // TODO: Save HTML to file and return URL once file handling is implemented
-      await inter.editReply(`Generated website for "${name}":\n${response}`);
+      // Save to database
+      await db.insert(sites).values({
+        name,
+        slug,
+        folder: `/sites/${slug}`, // We'll use this path later for file storage
+      });
+      
+      await inter.editReply(`Generated website for "${name}" (${slug}):\n${response}`);
     } catch (error) {
       if (error instanceof Error) {
         console.error(error);
