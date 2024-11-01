@@ -25,6 +25,18 @@ export const generateCommand = createCommand(
     const { name, idea } = inter.input;
     const slug = slugify(name);
 
+    // Check if slug already exists
+    const existing = await db.query.sites.findFirst({
+      where: (sites, { eq }) => eq(sites.slug, slug),
+    });
+
+    if (existing) {
+      await inter.reply(
+        `A website with the name "${name}" already exists. Please choose a different name.`
+      );
+      return;
+    }
+
     await inter.reply(`Generating website "${name}" based on your idea...`);
 
     try {
