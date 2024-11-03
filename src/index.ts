@@ -17,9 +17,38 @@ client.once(Events.ClientReady, (c) => {
 });
 
 // Animal emojis for reactions
-const animalEmojis = ['🐶', '🐱', '🐭', '🐹', '🐰', '🦊', '🐻', '🐼', '🐨', '🐯', 
-                      '🦁', '🐮', '🐷', '🐸', '🐵', '🐔', '🐧', '🐦', '🦆', '🦅',
-                      '🦉', '🦇', '🐺', '🐗', '🐴', '🦄', '🐝', '🐛', '🦋', '🐌'];
+const animalEmojis = [
+  "🐶",
+  "🐱",
+  "🐭",
+  "🐹",
+  "🐰",
+  "🦊",
+  "🐻",
+  "🐼",
+  "🐨",
+  "🐯",
+  "🦁",
+  "🐮",
+  "🐷",
+  "🐸",
+  "🐵",
+  "🐔",
+  "🐧",
+  "🐦",
+  "🦆",
+  "🦅",
+  "🦉",
+  "🦇",
+  "🐺",
+  "🐗",
+  "🐴",
+  "🦄",
+  "🐝",
+  "🐛",
+  "🦋",
+  "🐌",
+];
 
 client.on(Events.InteractionCreate, (interaction) => {
   if (!interaction.isCommand()) return;
@@ -29,20 +58,24 @@ client.on(Events.InteractionCreate, (interaction) => {
 });
 
 client.on(Events.MessageCreate, async (message: Message) => {
-  if (message.content.toLowerCase() === 'animals') {
+  if (message.content.toLowerCase() === "animals") {
     // Get reference to the message being replied to
-    const repliedTo = message.reference ? await message.channel.messages.fetch(message.reference.messageId!) : null;
-    
+    const repliedTo = message.reference
+      ? await message.channel.messages.fetch(message.reference.messageId!)
+      : null;
+
     if (repliedTo) {
       // Shuffle and take 20 random emojis
-      const shuffled = [...animalEmojis].sort(() => Math.random() - 0.5).slice(0, 20);
-      
+      const shuffled = [...animalEmojis]
+        .sort(() => Math.random() - 0.5)
+        .slice(0, 20);
+
       // Add reactions
       for (const emoji of shuffled) {
         try {
-          await repliedTo.react(emoji);
+          repliedTo.react(emoji);
         } catch (error) {
-          console.error('Error adding reaction:', error);
+          console.error("Error adding reaction:", error);
         }
       }
     }
