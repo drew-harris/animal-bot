@@ -78,6 +78,13 @@ client.on(Events.MessageCreate, async (message: Message) => {
           console.error("Error adding reaction:", error);
         }
       }
+
+      // Delete the "animals" message
+      try {
+        await message.delete();
+      } catch (error) {
+        console.error("Error deleting message:", error);
+      }
     }
   }
 });
