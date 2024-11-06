@@ -59,7 +59,7 @@ export const generateCommand = createCommand(
       if (js) {
         html = html.replace(
           /<script\s+src=["'](?:[^"']+)?["']/g,
-          `<script src="/${slug}/script.js"`
+          `<script src="/${slug}/script.js"`,
         );
       }
 
